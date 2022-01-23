@@ -30,9 +30,9 @@ jobs:
       - name: Extract Version
         id: version_step
         run: |
-          echo "##[set-output name=version;]VERSION=${GITHUB_REF#$"refs/tags/v"}"
-          echo "##[set-output name=version_tag;]$GITHUB_REPOSITORY:${GITHUB_REF#$"refs/tags/v"}"
-          echo "##[set-output name=latest_tag;]$GITHUB_REPOSITORY:latest"
+          echo "##[set-output name=version;]VERSION=${GITHUB_REF#$"refs/tags/"}"
+          echo "##[set-output name=version_tag;]piraces/bfg-repo-cleaner:${GITHUB_REF#$"refs/tags/"}"
+          echo "##[set-output name=latest_tag;]piraces/bfg-repo-cleaner:latest"
 
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
