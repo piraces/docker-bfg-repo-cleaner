@@ -14,6 +14,6 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build image
-        run: docker build -t piraces/bfg-repo-cleaner:latest .
+        run: docker build -t ghcr.io/piraces/bfg-repo-cleaner:latest .
       - name: Dive
-        run: docker run -e CI=true -e DOCKER_API_VERSION=1.37 --rm -v /var/run/docker.sock:/var/run/docker.sock --mount type=bind,source=/home/runner/work/docker-bfg-repo-cleaner/docker-bfg-repo-cleaner/.dive-ci.yml,target=/.dive-ci wagoodman/dive:latest piraces/bfg-repo-cleaner:latest --ci-config /.dive-ci
+        run: docker run -e CI=true -e DOCKER_API_VERSION=1.37 --rm -v /var/run/docker.sock:/var/run/docker.sock --mount type=bind,source=/home/runner/work/docker-bfg-repo-cleaner/docker-bfg-repo-cleaner/.dive-ci.yml,target=/.dive-ci wagoodman/dive:latest ghcr.io/piraces/bfg-repo-cleaner:latest --ci-config /.dive-ci
