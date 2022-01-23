@@ -1,6 +1,7 @@
 # docker-bfg-repo-cleaner
 
 [![Publish Docker image](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/docker-publish.yml)
+[![CI Dive Check](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/dive-check.yml/badge.svg)](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/dive-check.yml)
 <a href="https://github.com/piraces/docker-bfg-repo-cleaner/pkgs/container/bfg-repo-cleaner/"><img src="https://img.shields.io/badge/GH%20Docker%20Image-latest-blue" alt="Docker GitHub"></a>
 <a href="https://hub.docker.com/r/piraces/bfg-repo-cleaner/"><img src="https://img.shields.io/docker/pulls/piraces/bfg-repo-cleaner.svg?style=flat-square&logo=docker" alt="Docker Pulls"></a>
 
