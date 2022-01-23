@@ -27,3 +27,9 @@ docker run --rm -v /c/DEV:/usr/src/myrepo -w /usr/src/myrepo ghcr.io/piraces/bfg
 ```
 
 Make sure to specify the correct path to mount and the working directory.
+
+# CI/CD workflows
+
+There are two workflows defined in this repository:
+- [Publish Docker Image](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/docker-publish.yml): builds, tag, label and push the image on every release to GitHub Docker repository and Docker Hub.
+- [CI Dive Check](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/dive-check.yml): checks with [dive](https://github.com/wagoodman/dive) every commit and PR to ensure we are keeping wasted space to a minimum.
