@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,8 +16,4 @@ jobs:
       - name: Build image
         run: docker build -t piraces/bfg-repo-cleaner:latest .
       - name: Dive
-        uses: yuichielectric/dive-action@0.0.4
-        with:
-          image: "piraces/bfg-repo-cleaner:latest"
-          config-file: ${{ github.workspace }}/.dive-ci.yml
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        run: docker run -e CI=true -e DOCKER_API_VERSION=1.37 --rm -v /var/run/docker.sock:/var/run/docker.sock --mount type=bind,source=/home/runner/work/docker-bfg-repo-cleaner/docker-bfg-repo-cleaner/.dive-ci.yml,target=/.dive-ci wagoodman/dive:latest piraces/bfg-repo-cleaner:latest --config-file /.dive-ci
