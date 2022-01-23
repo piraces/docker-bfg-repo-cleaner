@@ -1,0 +1,23 @@
+name: CI Dive Check
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build -t piraces/bfg-repo-cleaner:latest .
+      - name: Dive
+        uses: yuichielectric/dive-action@0.0.4
+        with:
+          image: "piraces/bfg-repo-cleaner:latest"
+          config-file: ${{ github.workspace }}/.dive-ci.yml
+          github-token: ${{ secrets.GITHUB_TOKEN }}
