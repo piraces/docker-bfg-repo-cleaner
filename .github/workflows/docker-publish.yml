@@ -1,97 +1,45 @@
-name: Docker Publish GH
+name: Publish Docker image
+
 on:
   release:
     types: [published]
-  workflow_dispatch:
-
-env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: piraces/bfg-repo-cleaner
-
 
 jobs:
-  build:
+  push_to_registries:
+    name: Push Docker image to multiple registries
     runs-on: ubuntu-latest
     permissions:
-      contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
-      id-token: write
-
+      contents: read
     steps:
-      - name: Checkout repository
+      - name: Check out the repo
         uses: actions/checkout@v2
-        
-        
-      # Extract version
-      - name: Extract Version
-        id: version_step
-        run: |
-          echo "##[set-output name=version;]VERSION=${GITHUB_REF#$"refs/tags/"}"
-          echo "##[set-output name=version_tag;]piraces/bfg-repo-cleaner:${GITHUB_REF#$"refs/tags/"}"
-          echo "##[set-output name=latest_tag;]piraces/bfg-repo-cleaner:latest"
-
-      # https://github.com/sigstore/cosign-installer
-      - name: Install cosign
-        uses: sigstore/cosign-installer@1e95c1de343b5b0c23352d6417ee3e48d5bcd422
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          cosign-release: 'v1.4.0'
-
-
-      # Workaround: https://github.com/docker/build-push-action/issues/461
-      - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
-
-      # Login against a Docker registry except on PR
-      # https://github.com/docker/login-action
-      - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Version to ENV
-      - name: PrepareReg Names
-        id: read-docker-image-identifiers
-        run: |
-          echo VERSION_TAG=$(echo ${{ steps.version_step.outputs.version_tag }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
-          echo LASTEST_TAG=$(echo ${{ steps.version_step.outputs.latest_tag  }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
-
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
-      - name: Extract Docker metadata
+      
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
-        id: build-and-push
+          images: |
+            piraces/bfg-repo-cleaner
+            ghcr.io/piraces/bfg-repo-cleaner
+      
+      - name: Build and push Docker images
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
           push: true
-          tags: |
-            ${{env.VERSION_TAG}}
-            ${{env.LASTEST_TAG}}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            ${{steps.version_step.outputs.version}}
-
-      # Sign the resulting Docker image digest except on PRs.
-      # This will only write to the public Rekor transparency log when the Docker
-      # repository is public to avoid leaking data.  If you would like to publish
-      # transparency data even for private images, pass --force to cosign below.
-      # https://github.com/sigstore/cosign
-      - name: Sign the published Docker image
-        env:
-          COSIGN_EXPERIMENTAL: "true"
-        # This step uses the identity token to provision an ephemeral certificate
-        # against the sigstore community Fulcio instance.
-        run: cosign sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
