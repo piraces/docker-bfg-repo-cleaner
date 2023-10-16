@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-slim
+FROM openjdk:11-jre-slim
 COPY bin/bfg-1.14.0.jar bfg.jar
 RUN echo "#!/usr/local/openjdk-8/bin/java -jar" > bfg && \
 cat bfg.jar >> bfg && \
