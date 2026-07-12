@@ -10,8 +10,8 @@ A docker image for [BFG Repo-Cleaner (by rtyley)](https://rtyley.github.io/bfg-r
 
 # How is built
 
-- Actually is built using the [openjdk](https://hub.docker.com/_/openjdk/) official image only with JRE ([openjdk:8-jre-slim](https://hub.docker.com/_/openjdk/?tab=tags&page=1&name=8-jre-slim)).
-- The actual `.jar` file is in this repo, managed with `Git LFS`. You can check the checksum from the original published `.jar` [available here](https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar).
+- Actually is built using the [Eclipse Temurin](https://hub.docker.com/_/eclipse-temurin/) JRE image ([eclipse-temurin:11-jre-jammy](https://hub.docker.com/_/eclipse-temurin)).
+- The actual `.jar` file is in this repo, managed with `Git LFS`. You can check the checksum from the original published `.jar` [available here](https://repo1.maven.org/maven2/com/madgag/bfg/1.15.0/bfg-1.15.0.jar).
 - In order to be able to execute the command `bfg` as it is, a little trick is made by specifying a ['Shebang'](https://bash.cyberciti.biz/guide/Shebang) and the `.jar` file content in an executable in the `/bin` folder of the container.
 
 # How to use it
@@ -31,5 +31,5 @@ Make sure to specify the correct path to mount and the working directory.
 # CI/CD workflows
 
 There are two workflows defined in this repository:
-- [Publish Docker Image](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/docker-publish.yml): builds, tag, label and push the image on every release to GitHub Docker repository and Docker Hub.
+- [Publish Docker Image](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/docker-publish.yml): builds, tags, labels and pushes the image on every release to GitHub Container Registry and Docker Hub.
 - [CI Dive Check](https://github.com/piraces/docker-bfg-repo-cleaner/actions/workflows/dive-check.yml): checks with [dive](https://github.com/wagoodman/dive) every commit and PR to ensure we are keeping wasted space to a minimum.

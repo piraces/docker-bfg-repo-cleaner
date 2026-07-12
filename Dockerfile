@@ -1,7 +1,4 @@
-FROM openjdk:8-jre-slim
-COPY bin/bfg-1.14.0.jar bfg.jar
-RUN echo "#!/usr/local/openjdk-8/bin/java -jar" > bfg && \
-cat bfg.jar >> bfg && \
-mv bfg /bin && \ 
-chmod +x /bin/bfg && \
-rm bfg.jar
+FROM eclipse-temurin:11-jre-jammy
+COPY bin/bfg-1.15.0.jar /opt/bfg.jar
+RUN printf '%s\n' '#!/usr/bin/env sh' 'exec java -jar /opt/bfg.jar "$@"' > /usr/local/bin/bfg \
+    && chmod +x /usr/local/bin/bfg
